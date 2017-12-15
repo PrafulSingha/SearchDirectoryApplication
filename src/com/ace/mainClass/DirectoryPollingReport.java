@@ -2,6 +2,7 @@ package com.ace.mainClass;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -12,6 +13,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,17 +25,20 @@ import org.apache.commons.io.FilenameUtils;
 public class DirectoryPollingReport {
 	   private static Map<WatchKey, Path> keyPathMap = new HashMap<>();
 
-	   public static void main (String[] args) throws Exception {
+	   public static void main (String[] args) throws Exception {/*
 	       try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
 	           registerDir(Paths.get("C:\\New folder"), watchService);
 	           startListening(watchService);
 	       }
-	   }
+	   */}
 
 	   private static void registerDir (Path path, WatchService watchService) throws
 	                       IOException {
 
-
+		   long wordCount=0;
+		   long letterCount=0;
+		   long vowelsCount=0;
+		   long specialCharacterCount=0;
 	       if (!Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
 	           return;
 	       }
@@ -46,18 +51,32 @@ public class DirectoryPollingReport {
 	                           StandardWatchEventKinds.ENTRY_MODIFY,
 	                           StandardWatchEventKinds.ENTRY_DELETE);
 	       keyPathMap.put(key, path);
-
+	       //createReport(path);
 
 	       for (File f : path.toFile().listFiles()) {
-	         registerDir(f.toPath(), watchService);
-	           if(FilenameUtils.isExtension(f.getName(),"txt") && FilenameUtils.isExtension(f.getName(),"csv")){
-	        	  
-
-	       		} 
+	    	   createReport(path);
+	    	   registerDir(f.toPath(), watchService);
+	           
 	           }
 	       }
 	   
-
+	   public static void createReport(Path path) throws IOException{
+			
+			long wordCount = 0;
+			long letterCount = 0;
+			long vowelsCount = 0;
+			long specialCharacterCount = 0;
+			for (File f : path.toFile().listFiles()) {
+		    	   if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
+		        	   Stream<String> fileLines = Files.lines(f.toPath(), Charset.defaultCharset());
+		        	
+		        	   wordCount = fileLines.flatMap(line -> Arrays.stream(line.split(" "))).count();
+		        	   
+		        	   System.out.println("File Name "+f.getName()+ " wordCount "+wordCount +" letterCount "+letterCount +" vowelsCount "+vowelsCount + " specialCharacterCount "+specialCharacterCount);
+		       		} 
+			  }
+		}
+	   
 	   private static void startListening (WatchService watchService) throws Exception {
 	       while (true) {
 	           WatchKey queuedKey = watchService.take();
