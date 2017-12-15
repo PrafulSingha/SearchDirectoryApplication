@@ -39,6 +39,7 @@ public class SearchDirectory {
 				for (WatchEvent<?> event : key.pollEvents()) {
 					System.out.println("Event kind:" + event.kind()
 							+ ". File affected: " + event.context() + ".");
+					
 				}
 				key.reset();
 			}

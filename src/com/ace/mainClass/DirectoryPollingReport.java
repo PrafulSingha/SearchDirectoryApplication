@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 
-public class NewClass {
+public class DirectoryPollingReport {
 	   private static Map<WatchKey, Path> keyPathMap = new HashMap<>();
 
 	   public static void main (String[] args) throws Exception {
@@ -49,7 +49,7 @@ public class NewClass {
 
 
 	       for (File f : path.toFile().listFiles()) {
-	           registerDir(f.toPath(), watchService);
+	         registerDir(f.toPath(), watchService);
 	           if(FilenameUtils.isExtension(f.getName(),"txt") && FilenameUtils.isExtension(f.getName(),"csv")){
 	        	  
 
