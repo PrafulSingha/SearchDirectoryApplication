@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
@@ -37,7 +38,7 @@ public class SearchDirectoryProcessor {
 			.getRuntime().availableProcessors());
 
 	/**
-	 * @param args
+	 * Starting Point of Application
 	 */
 	public static void main(String[] args) {
 		try {
@@ -71,15 +72,17 @@ public class SearchDirectoryProcessor {
 	}
 	
 	
-	
+	/**
+	 * createMapData
+	 */
 	private void createMapData(Path path) throws IOException {
 
 		for (File f : path.toFile().listFiles()) {
 			if (FilenameUtils.isExtension(f.getName(), "txt")
 					|| FilenameUtils.isExtension(f.getName(), "csv")) {
-				//createCommonFile(f);
-				fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
-		 		cFiles.createmtdFile(f);
+				createCommonFile(f);
+				/*fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
+		 		cFiles.createmtdFile(f);*/
 				
 
 			}
@@ -113,8 +116,7 @@ public class SearchDirectoryProcessor {
 					try {
 						cFiles.createmtdFile(f);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.log(Level.WARNING, " IO Exception "+e.getMessage());
 					}
 				
 			}
