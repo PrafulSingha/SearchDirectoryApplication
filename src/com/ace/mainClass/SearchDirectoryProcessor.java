@@ -27,8 +27,8 @@ import org.apache.commons.io.FilenameUtils;
  * @author pku160
  *
  */
-public class SearchDirectory {
-	private static final Logger log = Logger.getLogger(SearchDirectory.class.getName());
+public class SearchDirectoryProcessor {
+	private static final Logger log = Logger.getLogger(SearchDirectoryProcessor.class.getName());
 	
 	private long wordCount = 0;
 	private long letterCount = 0;
@@ -41,7 +41,7 @@ public class SearchDirectory {
 	 */
 	public static void main(String[] args) {
 		try {
-			SearchDirectory sc=new SearchDirectory();
+			SearchDirectoryProcessor sc=new SearchDirectoryProcessor();
 			WatchService watchService = FileSystems.getDefault()
 					.newWatchService();
 			
@@ -50,7 +50,7 @@ public class SearchDirectory {
 			path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE,
 					StandardWatchEventKinds.ENTRY_MODIFY);
-			SearchDirectory sDirectory=new SearchDirectory();
+			SearchDirectoryProcessor sDirectory=new SearchDirectoryProcessor();
 			sDirectory.createMapData(path);
 			
 			WatchKey key= watchService.poll(2, TimeUnit.SECONDS);
