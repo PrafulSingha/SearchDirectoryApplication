@@ -81,10 +81,6 @@ public class SearchDirectoryProcessor {
 			if (FilenameUtils.isExtension(f.getName(), "txt")
 					|| FilenameUtils.isExtension(f.getName(), "csv")) {
 				createCommonFile(f);
-				/*fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
-		 		cFiles.createmtdFile(f);*/
-				
-
 			}
 
 		}
