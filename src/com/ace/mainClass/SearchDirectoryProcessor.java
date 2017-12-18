@@ -15,8 +15,11 @@ import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+
 import org.apache.commons.io.FilenameUtils;
 
 import com.ace.entity.FileResult;
@@ -30,6 +33,8 @@ public class SearchDirectoryProcessor {
 	private static final Logger log = Logger.getLogger(SearchDirectoryProcessor.class.getName());
 	private createFiles cFiles=new createFiles();
 	private Map<String,Long> fileDetails=new HashMap<String,Long>();
+	private ExecutorService service = Executors.newFixedThreadPool(Runtime
+			.getRuntime().availableProcessors());
 
 	/**
 	 * @param args
@@ -52,8 +57,9 @@ public class SearchDirectoryProcessor {
 			sc.createReport(path);
 			while ((key = watchService.take()) != null) {
 				for (WatchEvent<?> event : key.pollEvents()) {
-					System.out.println("Event kind:" + event.kind()
-							+ ". File affected: " + event.context() + ".");	
+					log.info("Event kind:" + event.kind()
+							+ ". File affected: " + event.context() + ".");
+					
 					sc.createReport(path);
 				}
 				key.reset();
@@ -66,15 +72,20 @@ public class SearchDirectoryProcessor {
 	
 	
 	
-	private  void createMapData(Path path) throws IOException {
+	private void createMapData(Path path) throws IOException {
+
 		for (File f : path.toFile().listFiles()) {
-			if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
-		 		  fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
-		 		 cFiles.createmtdFile(f);
+			if (FilenameUtils.isExtension(f.getName(), "txt")
+					|| FilenameUtils.isExtension(f.getName(), "csv")) {
+				//createCommonFile(f);
+				fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
+		 		cFiles.createmtdFile(f);
+				
+
 			}
 
 		}
-		
+
 	}
 
 
@@ -94,7 +105,22 @@ public class SearchDirectoryProcessor {
 		
 	}
 	
-	
+	public void createCommonFile(File f){
+		service.submit(new Runnable() {
+			public void run() {
+				fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
+		 		 
+					try {
+						cFiles.createmtdFile(f);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+			}
+		});
+		
+	}
 	
 	
 }

@@ -1,7 +1,6 @@
 package com.ace.utilities;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +45,6 @@ public class createFiles {
 	
 	public List<FileResult> createdmtdFile(Path path) throws IOException {
 		List<FileResult> listOfData=new ArrayList<FileResult>();
-		System.out.println("path "+path.toString());
 		int mtdWordCount=0;
 		for (File f : path.toFile().listFiles()) {
 			if (FilenameUtils.isExtension(f.getName(), "mtd")) {
@@ -55,7 +53,6 @@ public class createFiles {
 				fileResult.setFileName(f.getName());
 				for(String line:lines){
 					if(line.split(" : ")[0].contains("WordCount")){
-						System.out.println("Split "+line.split(" : "));
 						fileResult.setWordCount(Long.valueOf(line.split(" : ")[1]));
 						mtdWordCount=mtdWordCount+Integer.valueOf(line.split(" : ")[1]);
 					}
