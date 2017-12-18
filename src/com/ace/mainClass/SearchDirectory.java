@@ -15,7 +15,10 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
@@ -25,6 +28,13 @@ import org.apache.commons.io.FilenameUtils;
  *
  */
 public class SearchDirectory {
+	private static final Logger log = Logger.getLogger(SearchDirectory.class.getName());
+	
+	private long wordCount = 0;
+	private long letterCount = 0;
+	private long vowelsCount = 0;
+	private long specialCharacterCount = 0;
+	private Map<String,Long> fileDetails=new HashMap<String,Long>();
 
 	/**
 	 * @param args
@@ -40,7 +50,9 @@ public class SearchDirectory {
 			path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE,
 					StandardWatchEventKinds.ENTRY_MODIFY);
-
+			SearchDirectory sDirectory=new SearchDirectory();
+			sDirectory.createMapData(path);
+			
 			WatchKey key= watchService.poll(2, TimeUnit.SECONDS);
 			sc.createReport(path);
 			while ((key = watchService.take()) != null) {
@@ -52,31 +64,35 @@ public class SearchDirectory {
 				key.reset();
 			}
 		} catch (InterruptedException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 	
-	public void createReport(Path path) throws IOException{
+	
+	
+	private  void createMapData(Path path) throws IOException {
+		for (File f : path.toFile().listFiles()) {
+			if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
+		 		  fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
+		 		  createmtdFile(f);
+			}
+
+		}
 		
-		long wordCount = 0;
-		long letterCount = 0;
-		long vowelsCount = 0;
-		long specialCharacterCount = 0;
+	}
+
+
+
+	public void createReport(Path path) throws IOException{
 		for (File f : path.toFile().listFiles()) {
-	    	   if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
-	        	   Stream<String> fileLines = Files.lines(f.toPath(), Charset.defaultCharset());
-	        	
-	        	   wordCount = fileLines.flatMap(line -> Arrays.stream(line.split(" "))).count();
-	        	   String report ="File Name "+f.getName()+ " wordCount "+wordCount +" letterCount "+letterCount +" vowelsCount "+vowelsCount + " specialCharacterCount "+specialCharacterCount;
-	        	   System.out.println(report);
-	        	   
-	        	   Files.write(Paths.get("c:/"+f.getName().substring(0, f.getName().indexOf(".")-1)+".mtd"), report.getBytes());
-	    	   
-	    	   }  
+			if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
+				if((fileDetails.containsKey(f.toPath().toString()) && !fileDetails.get(f.toPath().toString()).equals(f.lastModified())) || (!fileDetails.containsKey(f.toPath().toString()))){
+					fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
+					createmtdFile(f);
+				}
 		  }
-		for (File f : path.toFile().listFiles()) {
+		/*for (File f : path.toFile().listFiles()) {
 		 if(FilenameUtils.isExtension(f.getName(),".mtd")){
       	   Stream<String> fileLines = Files.lines(f.toPath(), Charset.defaultCharset());
       	
@@ -86,10 +102,18 @@ public class SearchDirectory {
       	   //Files.write(Paths.get("c:/New folder.mtd"), report.getBytes());
   	   
   	   }
-		}
+		}*/
 	}
 	
+	}
 	
-	
+	public void createmtdFile(File f) throws IOException{
+	   Stream<String> fileLines = Files.lines(f.toPath(), Charset.defaultCharset());
+	   wordCount = fileLines.flatMap(line -> Arrays.stream(line.split(" "))).count();
+ 	   String report ="File Name "+f.getName()+ " wordCount "+wordCount +" letterCount "+letterCount +" vowelsCount "+vowelsCount + " specialCharacterCount "+specialCharacterCount;
+ 	   System.out.println(report);
+ 	   
+ 	   Files.write(Paths.get("c:/New folder/"+f.getName().substring(0, f.getName().indexOf(".")-1)+".mtd"), report.getBytes());
+	}
 
 }
