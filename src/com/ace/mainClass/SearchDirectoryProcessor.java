@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
 
 import com.ace.entity.FileResult;
+import com.ace.exception.SDApplicationException;
 import com.ace.utilities.createFiles;
 
 /**
@@ -40,7 +41,7 @@ public class SearchDirectoryProcessor {
 	/**
 	 * Starting Point of Application
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SDApplicationException{
 		try {
 			SearchDirectoryProcessor sc=new SearchDirectoryProcessor();
 			WatchService watchService = FileSystems.getDefault()
@@ -66,7 +67,7 @@ public class SearchDirectoryProcessor {
 				key.reset();
 			}
 		} catch (InterruptedException | IOException e) {
-			e.printStackTrace();
+			throw new SDApplicationException("Error Occurred "+e.getMessage());
 		}
 
 	}
