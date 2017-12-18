@@ -2,6 +2,8 @@
     <wb-module deploy-name="SearchDirectoryApplication">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/WebContent/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources"/>
         <property name="context-root" value="SearchDirectoryApplication"/>
         <property name="java-output-path" value="/SearchDirectoryApplication/build/classes"/>
     </wb-module>

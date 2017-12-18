@@ -2,11 +2,20 @@ package com.ace.entity;
 
 public class FileResult {
 	
+	private String fileName;
 	private long wordCount = 0;
 	private long letterCount = 0;
 	private long vowelsCount = 0;
 	private long specialCharacterCount = 0;
 	
+	
+	
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 	public long getWordCount() {
 		return wordCount;
 	}
@@ -34,18 +43,12 @@ public class FileResult {
 	public FileResult() {
 		
 	}
-	public FileResult(long wordCount, long letterCount, long vowelsCount,
-			long specialCharacterCount) {
-		super();
-		this.wordCount = wordCount;
-		this.letterCount = letterCount;
-		this.vowelsCount = vowelsCount;
-		this.specialCharacterCount = specialCharacterCount;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((fileName == null) ? 0 : fileName.hashCode());
 		result = prime * result + (int) (letterCount ^ (letterCount >>> 32));
 		result = prime
 				* result
@@ -63,6 +66,11 @@ public class FileResult {
 		if (getClass() != obj.getClass())
 			return false;
 		FileResult other = (FileResult) obj;
+		if (fileName == null) {
+			if (other.fileName != null)
+				return false;
+		} else if (!fileName.equals(other.fileName))
+			return false;
 		if (letterCount != other.letterCount)
 			return false;
 		if (specialCharacterCount != other.specialCharacterCount)
@@ -73,6 +81,14 @@ public class FileResult {
 			return false;
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "FileResult [fileName=" + fileName + ", wordCount=" + wordCount
+				+ ", letterCount=" + letterCount + ", vowelsCount="
+				+ vowelsCount + ", specialCharacterCount="
+				+ specialCharacterCount + "]";
+	}
+	
 	
 	
 	
