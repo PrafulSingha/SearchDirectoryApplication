@@ -67,6 +67,7 @@ public class SearchDirectoryProcessor {
 				key.reset();
 			}
 		} catch (InterruptedException | IOException e) {
+			log.log(Level.WARNING, "Error Occurred "+e.getMessage());
 			throw new SDApplicationException("Error Occurred "+e.getMessage());
 		}
 
@@ -90,7 +91,7 @@ public class SearchDirectoryProcessor {
 
 
 
-	public void createReport(Path path) throws IOException{
+	public void createReport(Path path) throws IOException, SDApplicationException{
 		for (File f : path.toFile().listFiles()) {
 			if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
 				if((fileDetails.containsKey(f.toPath().toString()) && !fileDetails.get(f.toPath().toString()).equals(f.lastModified())) || (!fileDetails.containsKey(f.toPath().toString()))){
