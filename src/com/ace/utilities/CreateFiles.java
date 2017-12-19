@@ -70,7 +70,7 @@ public class CreateFiles {
 		report = " WordCount : "
 				+ fileResult.getWordCount() + "\n LetterCount : "
 				+ fileResult.getLetterCount() + "\n VowelsCount : "
-				+ fileResult.getVowelsCount() + "\n SpecialCharacterCount :"
+				+ fileResult.getVowelsCount() + "\n SpecialCharacterCount : "
 				+ fileResult.getSpecialCharacterCount();
 		System.out.println(report);
 		
@@ -81,7 +81,7 @@ public class CreateFiles {
 	
 	public List<FileResult> createdmtdFile(Path path) throws IOException {
 		List<FileResult> listOfData=new ArrayList<FileResult>();
-		int mtdWordCount=0;
+		long mtdWordCount=0,mtdCharCount=0,mtdVowelCount=0,mtdSplCount=0;
 		for (File f : path.toFile().listFiles()) {
 			if (FilenameUtils.isExtension(f.getName(), "mtd")) {
 				List<String> lines = Files.readAllLines(Paths.get(f.toPath().toString()),Charset.defaultCharset());
@@ -90,13 +90,25 @@ public class CreateFiles {
 				for(String line:lines){
 					if(line.split(" : ")[0].contains("WordCount")){
 						fileResult.setWordCount(Long.valueOf(line.split(" : ")[1]));
-						mtdWordCount=mtdWordCount+Integer.valueOf(line.split(" : ")[1]);
+						mtdWordCount=mtdWordCount+Long.valueOf(line.split(" : ")[1]);
+					}
+					if(line.split(" : ")[0].contains("LetterCount")){
+						fileResult.setLetterCount(Long.valueOf(line.split(" : ")[1]));
+						mtdCharCount=mtdCharCount+Long.valueOf(line.split(" : ")[1]);
+					}
+					if(line.split(" : ")[0].contains("VowelsCount")){
+						fileResult.setVowelsCount(Long.valueOf(line.split(" : ")[1]));
+						mtdVowelCount=mtdVowelCount+Long.valueOf(line.split(" : ")[1]);
+					}
+					if(line.split(" : ")[0].contains("SpecialCharacterCount")){
+						fileResult.setSpecialCharacterCount(Long.valueOf(line.split(" : ")[1]));
+						mtdSplCount=mtdSplCount+Long.valueOf(line.split(" : ")[1]);
 					}
 				}
 				listOfData.add(fileResult);
 				
 			}
-			report ="Total Word count "+mtdWordCount;
+			report =" Total Word count "+mtdWordCount+" \n Total Letter count "+mtdCharCount+" \n Total Vowels count "+mtdVowelCount+" \n Total SpecialCharacter count "+mtdSplCount;
 
 		}
 		Files.write(Paths.get("c://New folder//New folder.dmtd"), report.getBytes());
