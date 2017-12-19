@@ -25,7 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.ace.entity.FileResult;
 import com.ace.exception.SDApplicationException;
-import com.ace.utilities.createFiles;
+import com.ace.utilities.CreateFiles;
 
 /**
  * @author pku160
@@ -33,7 +33,7 @@ import com.ace.utilities.createFiles;
  */
 public class SearchDirectoryProcessor {
 	private static final Logger log = Logger.getLogger(SearchDirectoryProcessor.class.getName());
-	private createFiles cFiles=new createFiles();
+	private CreateFiles cFiles=new CreateFiles();
 	private Map<String,Long> fileDetails=new HashMap<String,Long>();
 	private ExecutorService service = Executors.newFixedThreadPool(Runtime
 			.getRuntime().availableProcessors());
