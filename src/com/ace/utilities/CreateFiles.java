@@ -26,11 +26,47 @@ public class CreateFiles {
 	
 	public void createmtdFile(File f) throws IOException {
 		fileResult=new FileResult();
+		List<String> vowels=new ArrayList<String>();
+		vowels.add("a");
+		vowels.add("e");
+		vowels.add("i");
+		vowels.add("o");
+		vowels.add("u");
+		List<String> spclChars=new ArrayList<String>();
+		spclChars.add("@");
+		spclChars.add("#");
+		spclChars.add("$");
+		spclChars.add("*");
+		long wordCount=0,charCount=0,vowelCount=0,splcharCount=0;
+		List<String> lines = Files.readAllLines(Paths.get(f.toPath().toString()),Charset.defaultCharset());
+		for(String line:lines){
+			wordCount=wordCount+line.split(" ").length;
+			for(String word:line.split(" ")){
+				charCount=charCount+word.length();
+				for(Character ch:word.toCharArray()){
+					if(vowels.contains(ch.toString().toLowerCase())){
+						vowelCount=vowelCount+1;
+					}
+					if(spclChars.contains(ch.toString())){
+						splcharCount=splcharCount+1;
+					}
+					
+				}
+			}
+		}
+		
+		fileResult.setWordCount(wordCount);
+		fileResult.setLetterCount(charCount);
+		fileResult.setVowelsCount(vowelCount);
+		fileResult.setSpecialCharacterCount(splcharCount);
+		fileResult.setFileName(f.getName());
+		
+		/*
 		Stream<String> fileLines = Files.lines(f.toPath(),
 				Charset.defaultCharset());
 		fileResult.setWordCount(fileLines.flatMap(
 				line -> Arrays.stream(line.split(" "))).count());
-		fileLines.close();
+		fileLines.close();*/
 		report = " WordCount : "
 				+ fileResult.getWordCount() + "\n LetterCount : "
 				+ fileResult.getLetterCount() + "\n VowelsCount : "
