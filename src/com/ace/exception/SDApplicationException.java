@@ -2,6 +2,11 @@ package com.ace.exception;
 
 public class SDApplicationException extends Exception{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8624355970591037094L;
+
 	public SDApplicationException() {
 		super();
 		// TODO Auto-generated constructor stub

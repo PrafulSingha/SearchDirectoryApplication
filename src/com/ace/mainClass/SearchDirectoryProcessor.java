@@ -12,9 +12,9 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +34,7 @@ import com.ace.utilities.CreateFiles;
 public class SearchDirectoryProcessor {
 	private static final Logger log = Logger.getLogger(SearchDirectoryProcessor.class.getName());
 	private CreateFiles cFiles=new CreateFiles();
-	private Map<String,Long> fileDetails=new HashMap<String,Long>();
+	private Map<String,Long> fileDetailsMap=new ConcurrentHashMap<String,Long>();
 	private ExecutorService service = Executors.newFixedThreadPool(Runtime
 			.getRuntime().availableProcessors());
 
@@ -94,8 +94,8 @@ public class SearchDirectoryProcessor {
 	public void createReport(Path path) throws IOException, SDApplicationException{
 		for (File f : path.toFile().listFiles()) {
 			if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
-				if((fileDetails.containsKey(f.toPath().toString()) && !fileDetails.get(f.toPath().toString()).equals(f.lastModified())) || (!fileDetails.containsKey(f.toPath().toString()))){
-					fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
+				if((fileDetailsMap.containsKey(f.toPath().toString()) && !fileDetailsMap.get(f.toPath().toString()).equals(f.lastModified())) || (!fileDetailsMap.containsKey(f.toPath().toString()))){
+					fileDetailsMap.put(f.toPath().toString(), new Long (f.lastModified()));
 					 cFiles.createmtdFile(f);
 				}
 		  }
@@ -109,7 +109,7 @@ public class SearchDirectoryProcessor {
 	public void createCommonFile(File f){
 		service.submit(new Runnable() {
 			public void run() {
-				fileDetails.put(f.toPath().toString(), new Long (f.lastModified()));
+				fileDetailsMap.put(f.toPath().toString(), new Long (f.lastModified()));
 		 		 
 					try {
 						cFiles.createmtdFile(f);
