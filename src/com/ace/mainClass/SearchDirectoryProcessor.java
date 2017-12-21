@@ -76,7 +76,7 @@ public class SearchDirectoryProcessor {
 	
 	
 	/**
-	 * createMapData
+	 * createMapData It will create map entry for all existing csv and txt files
 	 */
 	private void createMapData(Path path) throws IOException {
 
@@ -91,16 +91,14 @@ public class SearchDirectoryProcessor {
 	}
 
 
-
+	/**
+	 * createMapData It will create report for new  csv and txt files
+	 */
 	public void createReport(Path path) throws IOException, SDApplicationException{
 		for (File f : path.toFile().listFiles()) {
 			if(FilenameUtils.isExtension(f.getName(),"txt") || FilenameUtils.isExtension(f.getName(),"csv")){
 				if((fileDetailsMap.containsKey(f.toPath().toString()) && !fileDetailsMap.get(f.toPath().toString()).equals(f.lastModified())) || (!fileDetailsMap.containsKey(f.toPath().toString()))){
-					fileDetailsMap.put(f.toPath().toString(), new Long (f.lastModified()));
-					 cFiles.createmtdFile(f);
-					 List<FileResult> listOfFileResult=cFiles.createdmtdFile(path);
-					 cFiles.createsmtdFile(listOfFileResult);
-				}
+					createCommonFile(f,path);				}
 		  }
 		}
 		
