@@ -115,20 +115,22 @@ public class CreateFiles {
 		Properties prop = new Properties();
 		InputStream input = null;
 		report="";
+		String props="";
 		try {
 			File file = new File("c://New folder//New folder.smtd");
 			input = getClass().getClassLoader().getResourceAsStream("config.properties");
 			prop.load(input);
-			if(prop.getProperty("SORT_ON").contains("WORD")){
+			props=prop.getProperty("SORT_ON");
+			if(props.contains("WORD")){
 				Collections.sort(countList, new FileResultSortingWord());
 			}
-			if(prop.getProperty("SORT_ON").contains("LETTER")){
+			if(props.contains("LETTER")){
 				Collections.sort(countList, new FileResultSortingChar());
 			}
-			if(prop.getProperty("SORT_ON").contains("VOWELS")){
+			if(props.contains("VOWELS")){
 				Collections.sort(countList, new FileResultSortingVowels());
 			}
-			if(prop.getProperty("SORT_ON").contains("SPLCHAR")){
+			if(props.contains("SPLCHAR")){
 				Collections.sort(countList, new FileResultSortingSplChar());
 			}
 			if (file.createNewFile()) {
@@ -141,7 +143,7 @@ public class CreateFiles {
 			
 			for(FileResult fileResult:countList){
 				if(FilenameUtils.isExtension(fileResult.getFileName(), "mtd")){
-					report=report+" File Name "+fileResult.getFileName() +" Number Of "+prop.getProperty("SORT_ON")+" " +fileResult.getWordCount() +"\n";
+					report=report+" File Name "+fileResult.getFileName() +" Number Of "+props+" " +fileResult.getWordCount() +"\n";
 				}
 				
 			}
