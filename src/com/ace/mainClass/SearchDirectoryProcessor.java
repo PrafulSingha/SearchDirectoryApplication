@@ -34,9 +34,7 @@ import com.ace.utilities.CreateFiles;
 public class SearchDirectoryProcessor {
 	private static final Logger log = Logger.getLogger(SearchDirectoryProcessor.class.getName());
 	private CreateFiles cFiles=new CreateFiles();
-	private Map<String,Long> fileDetailsMap=new ConcurrentHashMap<String,Long>();
-	private ExecutorService service = Executors.newFixedThreadPool(Runtime
-			.getRuntime().availableProcessors());
+	private static Map<String,Long>  fileDetailsMap=new ConcurrentHashMap<String,Long>();
 
 	/**
 	 * Starting Point of Application
@@ -57,14 +55,17 @@ public class SearchDirectoryProcessor {
 			
 			WatchKey key= watchService.poll(2, TimeUnit.SECONDS);
 			sc.createReport(path);
-			while ((key = watchService.take()) != null) {
+			while (true) {
 				for (WatchEvent<?> event : key.pollEvents()) {
 					log.info("Event kind:" + event.kind()
 							+ ". File affected: " + event.context() + ".");
 					
 					sc.createReport(path);
 				}
-				key.reset();
+				boolean valid = key.reset();
+			    if (!valid) {
+			        break;
+			    }
 			}
 		} catch (InterruptedException | IOException e) {
 			log.log(Level.WARNING, "Error Occurred "+e.getMessage());
@@ -82,7 +83,7 @@ public class SearchDirectoryProcessor {
 		for (File f : path.toFile().listFiles()) {
 			if (FilenameUtils.isExtension(f.getName(), "txt")
 					|| FilenameUtils.isExtension(f.getName(), "csv")) {
-				createCommonFile(f);
+				createCommonFile(f,path);
 			}
 
 		}
@@ -97,29 +98,32 @@ public class SearchDirectoryProcessor {
 				if((fileDetailsMap.containsKey(f.toPath().toString()) && !fileDetailsMap.get(f.toPath().toString()).equals(f.lastModified())) || (!fileDetailsMap.containsKey(f.toPath().toString()))){
 					fileDetailsMap.put(f.toPath().toString(), new Long (f.lastModified()));
 					 cFiles.createmtdFile(f);
+					 List<FileResult> listOfFileResult=cFiles.createdmtdFile(path);
+					 cFiles.createsmtdFile(listOfFileResult);
 				}
 		  }
 		}
-		List<FileResult> listOfFileResult=cFiles.createdmtdFile(path);
-		
-		cFiles.createsmtdFile(listOfFileResult);
 		
 	}
 	
-	public void createCommonFile(File f){
+	public void createCommonFile(File f,Path path){
+		ExecutorService service = Executors.newFixedThreadPool(Runtime
+				.getRuntime().availableProcessors());
 		service.submit(new Runnable() {
 			public void run() {
 				fileDetailsMap.put(f.toPath().toString(), new Long (f.lastModified()));
 		 		 
 					try {
 						cFiles.createmtdFile(f);
-					} catch (IOException e) {
+						List<FileResult> listOfFileResult=cFiles.createdmtdFile(path);
+						cFiles.createsmtdFile(listOfFileResult);
+					} catch (IOException | SDApplicationException e) {
 						log.log(Level.WARNING, " IO Exception "+e.getMessage());
 					}
 				
 			}
 		});
-		
+		service.shutdown();
 	}
 	
 	
